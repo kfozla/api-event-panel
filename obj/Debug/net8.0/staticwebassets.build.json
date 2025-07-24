@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "4dVw16SK4ZgkQDIOanyZwK52YshcEob6T5V4VOOOnes=",
+  "Source": "api-event-panel",
+  "BasePath": "_content/api-event-panel",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
