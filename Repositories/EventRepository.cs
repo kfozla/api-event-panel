@@ -28,6 +28,7 @@ public class EventRepository: IEventRepository
     public async Task<EventModel> GetEvent(int id)
     {
         return await _context.Events.FindAsync(id);
+        
     }
 
     public async Task UpdateEvent(EventModel eventModel)
