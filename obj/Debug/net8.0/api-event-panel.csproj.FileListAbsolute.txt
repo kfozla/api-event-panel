@@ -167,3 +167,4 @@
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/bin/Debug/net8.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/bin/Debug/net8.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/yusuf/Desktop/api-event-panel/api-event-panel/obj/Debug/net8.0/api-event-panel.sourcelink.json

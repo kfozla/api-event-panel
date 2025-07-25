@@ -14,9 +14,11 @@ public class EventService: IEventService
 
     public async Task SaveEvent(EventModel eventModel)
     {
-        eventModel.CreatedOn = DateTime.UtcNow;
-        eventModel.ModifiedOn = DateTime.UtcNow;
+   
+        eventModel.CreatedOn = DateTime.Now;
+        eventModel.ModifiedOn = DateTime.Now;
         await _repository.SaveEvent(eventModel);
+       
     }
     public async Task<List<EventModel>> GetEvents()
     {
@@ -30,6 +32,7 @@ public class EventService: IEventService
 
     public async Task UpdateEvent(EventModel eventModel)
     {
+        eventModel.ModifiedOn = DateTime.Now;
         await _repository.UpdateEvent(eventModel);
     }
 
