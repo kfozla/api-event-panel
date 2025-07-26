@@ -14,9 +14,9 @@ public class EventService: IEventService
 
     public async Task SaveEvent(EventModel eventModel)
     {
-   
         eventModel.CreatedOn = DateTime.Now;
         eventModel.ModifiedOn = DateTime.Now;
+       
         await _repository.SaveEvent(eventModel);
        
     }

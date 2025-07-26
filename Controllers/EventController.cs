@@ -19,14 +19,24 @@ public class EventController:ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostEvent(EventModel eventModel)
+    public async Task<IActionResult> PostEvent([FromBody]EventModel eventModel)
     {
+        if (eventModel.MediaList != null)
+        {
+            foreach (var media in eventModel.MediaList)
+            {
+                media.EventModel = eventModel; // İlişkiyi set et
+            }
+        }
+        eventModel.CreatedOn = DateTime.Now;
+        eventModel.ModifiedOn = DateTime.Now;
         await _service.SaveEvent(eventModel);
         return Ok();
     }
     [HttpGet]
     public async Task<IActionResult> GetEvents()
     {
+        
         return Ok(await _service.GetEvents());
     }
 

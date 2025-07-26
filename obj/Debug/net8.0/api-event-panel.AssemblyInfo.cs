@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("api-event-panel")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ace4dd085c6099765b7d359e941bdb2d047ed3d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0317af2a458c9edae1f61943e7e4caacf9fea8f8")]
 [assembly: System.Reflection.AssemblyProductAttribute("api-event-panel")]
 [assembly: System.Reflection.AssemblyTitleAttribute("api-event-panel")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
