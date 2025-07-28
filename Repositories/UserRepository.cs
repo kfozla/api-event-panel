@@ -33,4 +33,12 @@ public class UserRepository: IUserRepository
         _context.Users.Remove(new UserModel { Id = id });
         await _context.SaveChangesAsync();
     }
+
+    public async  Task<List<UserModel>> GetUsersByEvent(int eventId)
+    {
+        return await _context.Users
+            .Where(u => u.EventId == eventId)
+            .Include(u => u.MediaList)  // Medya listesini de dahil et
+            .ToListAsync();
+    }
 }

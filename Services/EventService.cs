@@ -40,4 +40,5 @@ public class EventService: IEventService
     {
         await _repository.DeleteEvent(id);
     }
+    
 }

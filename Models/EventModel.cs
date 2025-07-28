@@ -4,8 +4,7 @@ public class EventModel
 {
     public EventModel()
     {
-        PersonList = new List<string>();
-        MediaList = new List<MediaModel>();
+        UserList = new List<UserModel>();
     }
     public int Id { get; set; }
     public string Name { get; set; }
@@ -14,10 +13,10 @@ public class EventModel
     public DateTime EndTime { get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime ModifiedOn { get; set; }
-    public DateTime DeletedOn { get; set; }
+    public DateTime? DeletedOn { get; set; }
     public string thumbnailUrl { get; set; }
-    public List<string> PersonList { get; set; }
-    public List<MediaModel>? MediaList { get; set; }
+    public List<UserModel> UserList { get; set; }
+   
     public string Theme{get;set;}
     public string DomainName{get;set;}
 }

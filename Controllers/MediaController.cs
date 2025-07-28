@@ -39,7 +39,7 @@ public class MediaController: ControllerBase
     }
 
     [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetUser([FromQuery]int userId)
+    public async Task<IActionResult> GetUser(int userId)
     {
        return Ok( await _service.GetMediaByUserId(userId));
     }
@@ -50,7 +50,7 @@ public class MediaController: ControllerBase
         return Ok(await _service.GetMediasByEventId(eventId));
     }
 
-    [HttpPost("{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMedia(int id)
     {
         await _service.DeleteMedia(id);

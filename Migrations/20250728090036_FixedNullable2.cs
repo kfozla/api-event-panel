@@ -5,31 +5,31 @@
 namespace api_event_panel.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserModel2 : Migration
+    public partial class FixedNullable2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "UserId",
+            migrationBuilder.AlterColumn<string>(
+                name: "PosterPath",
                 table: "Media",
-                type: "int",
+                type: "nvarchar(max)",
                 nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "UserId",
+            migrationBuilder.AlterColumn<string>(
+                name: "PosterPath",
                 table: "Media",
-                type: "int",
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
+                defaultValue: "",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
                 oldNullable: true);
         }
     }

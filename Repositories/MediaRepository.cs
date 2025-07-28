@@ -31,8 +31,9 @@ public class MediaRepository: IMediaRepository
 
     public async Task<List<MediaModel>> GetMediasByEventId(int eventId)
     {
-        return await _context.Media
-            .Where(m => m.EventModelId == eventId)
+        return await _context.Users
+            .Where(u => u.EventId == eventId)
+            .SelectMany(u=>u.MediaList)
             .ToListAsync();
     }
 

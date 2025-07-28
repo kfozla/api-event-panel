@@ -18,13 +18,13 @@ public class UserController: ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserModel>>> Get()
     {
-        return Ok(_service.GetAll());
+        return Ok(await _service.GetAll());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserModel>> Get(int id)
     {
-        return Ok(_service.GetById(id));
+        return Ok( await _service.GetById(id));
     }
 
     [HttpPost]
@@ -41,5 +41,11 @@ public class UserController: ControllerBase
         await _service.DeleteUser(id);
         return Ok(user);
     }
-    
+
+    [HttpGet("event/{eventId}")]
+    public async Task<ActionResult<List<UserModel>>> GetUsersByEvent(int eventId)
+    {
+        var userList = await _service.GetUsersByEvent(eventId);
+        return Ok(userList);
+    }
 }

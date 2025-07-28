@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<UserModel> GetById(int id);
     Task AddUser(UserModel user);
     Task DeleteUser(int id);
+    Task<List<UserModel>> GetUsersByEvent(int eventId);
 }

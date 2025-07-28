@@ -11,23 +11,19 @@ namespace api_event_panel.Controllers;
 public class EventController:ControllerBase
 {
     private readonly IEventService _service;
+    private readonly IUserRepository _userRepository;
+    private readonly IMediaRepository _mediaRepository;
   
-    public EventController(IEventService service)
+    public EventController(IEventService service, IUserRepository userRepository, IMediaRepository mediaRepository)
     {
         _service = service;
-      
+        _userRepository = userRepository;
+        _mediaRepository = mediaRepository;
     }
 
     [HttpPost]
     public async Task<IActionResult> PostEvent([FromBody]EventModel eventModel)
     {
-        if (eventModel.MediaList != null)
-        {
-            foreach (var media in eventModel.MediaList)
-            {
-                media.EventModel = eventModel; // İlişkiyi set et
-            }
-        }
         eventModel.CreatedOn = DateTime.Now;
         eventModel.ModifiedOn = DateTime.Now;
         await _service.SaveEvent(eventModel);
@@ -76,6 +72,18 @@ public class EventController:ControllerBase
         return Ok();
     }
 
-    
+    [HttpGet("{id}/users")]
+    public async Task<IActionResult> GetEventUsers(int id)
+    {
+        var userList = await _userRepository.GetUsersByEvent(id);
+        return Ok(userList);
+    }
+
+    [HttpGet("{id}/medias")]
+    public async Task<IActionResult> GetEventMedias(int id)
+    {
+        var mediaList = await _mediaRepository.GetMediasByEventId( id);
+        return Ok(mediaList);
+    }
     
 }

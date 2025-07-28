@@ -32,4 +32,9 @@ public class UserService: IUserService
     {
         await _repository.DeleteUser(id);
     }
+
+    public async Task<List <UserModel>> GetUsersByEvent(int eventId)
+    {
+       return await _repository.GetUsersByEvent(eventId);
+    }
 }

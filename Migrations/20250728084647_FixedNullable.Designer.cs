@@ -12,8 +12,8 @@ using api_event_panel.Data;
 namespace api_event_panel.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250726144747_AddUserModel2")]
-    partial class AddUserModel2
+    [Migration("20250728084647_FixedNullable")]
+    partial class FixedNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace api_event_panel.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DeletedOn")
+                    b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -54,10 +54,6 @@ namespace api_event_panel.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("PersonList")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -88,9 +84,6 @@ namespace api_event_panel.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EventModelId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -110,12 +103,10 @@ namespace api_event_panel.Migrations
                     b.Property<DateTime>("UploadedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventModelId");
 
                     b.HasIndex("UserId");
 
@@ -130,6 +121,9 @@ namespace api_event_panel.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SessionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,30 +134,36 @@ namespace api_event_panel.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventId");
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("api_event_panel.Models.MediaModel", b =>
                 {
-                    b.HasOne("api_event_panel.Models.EventModel", "EventModel")
-                        .WithMany("MediaList")
-                        .HasForeignKey("EventModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("api_event_panel.Models.UserModel", "User")
                         .WithMany("MediaList")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("EventModel");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("api_event_panel.Models.UserModel", b =>
+                {
+                    b.HasOne("api_event_panel.Models.EventModel", "Event")
+                        .WithMany("UserList")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("api_event_panel.Models.EventModel", b =>
                 {
-                    b.Navigation("MediaList");
+                    b.Navigation("UserList");
                 });
 
             modelBuilder.Entity("api_event_panel.Models.UserModel", b =>

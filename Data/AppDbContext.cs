@@ -16,17 +16,17 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Fluent API ile ilişki tanımı
-        modelBuilder.Entity<MediaModel>()
-            .HasOne(m => m.EventModel) // Media'nın bir Event'i var
-            .WithMany(e => e.MediaList) // Event'in birden fazla Media'sı var
-            .HasForeignKey("EventModelId") // foreign key property'si
-            .OnDelete(DeleteBehavior.Cascade); // Event silinirse medyalar da silinsin
-        
-        modelBuilder.Entity<MediaModel>()
-            .HasOne(m => m.User)
-            .WithMany(u => u.MediaList)
+        modelBuilder.Entity<UserModel>()
+            .HasMany(u => u.MediaList)
+            .WithOne(m => m.User)
             .HasForeignKey(m => m.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EventModel>()
+            .HasMany(e => e.UserList)
+            .WithOne(u => u.Event)
+            .HasForeignKey(u => u.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
+
 }

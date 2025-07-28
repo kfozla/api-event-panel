@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace api_event_panel.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMediaModelEvenModelId : Migration
+    public partial class FixedNullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DeletedOn",
-                table: "Media",
+                table: "Events",
                 type: "datetime2",
                 nullable: true,
                 oldClrType: typeof(DateTime),
@@ -25,7 +25,7 @@ namespace api_event_panel.Migrations
         {
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DeletedOn",
-                table: "Media",
+                table: "Events",
                 type: "datetime2",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
