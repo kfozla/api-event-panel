@@ -21,7 +21,7 @@ public class MediaRepository: IMediaRepository
 
     public async Task<MediaModel> GetMedia(int id)
     {
-        return await _context.Media.FindAsync(id);
+        return await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<List<MediaModel>> GetMedias()
@@ -39,8 +39,19 @@ public class MediaRepository: IMediaRepository
 
     public async Task DeleteMedia(int id)
     {
-        _context.Media.Remove(new MediaModel { Id = id });
-        await _context.SaveChangesAsync();
+        var media = await _context.Media.FirstOrDefaultAsync(m => m.Id == id);
+        if (media != null)
+        {
+            // Dosya silme
+            if (File.Exists(media.FilePath))
+                File.Delete(media.FilePath);
+
+            if (!string.IsNullOrEmpty(media.PosterPath) && File.Exists(media.PosterPath))
+                File.Delete(media.PosterPath);
+
+            _context.Media.Remove(media); // Aynı instance ile sil
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<List<MediaModel>> GetMediaByUserId(int userId)
