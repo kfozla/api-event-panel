@@ -6,10 +6,12 @@ namespace api_event_panel.Services;
 public class UserService: IUserService
 {
     private readonly IUserRepository _repository;
+    private readonly IMediaRepository _mediaRepository;
 
-    public UserService(IUserRepository repository)
+    public UserService(IUserRepository repository, IMediaRepository mediaRepository)
     {
         _repository = repository;
+        _mediaRepository = mediaRepository;
     }
 
     public async Task<List<UserModel>> GetAll()
@@ -36,5 +38,16 @@ public class UserService: IUserService
     public async Task<List <UserModel>> GetUsersByEvent(int eventId)
     {
        return await _repository.GetUsersByEvent(eventId);
+    }
+
+    public async Task<int> GetUserMediaCount(int userId)
+    {
+        var mediaList=await _mediaRepository.GetMediaByUserId(userId);
+        return mediaList.Count;
+    }
+
+    public async Task<List<MediaModel>> GetUserMediaList(int userId)
+    {
+        return await _mediaRepository.GetMediaByUserId(userId);
     }
 }

@@ -10,4 +10,7 @@ public interface IUserService
     Task AddUser(UserModel user);
     Task DeleteUser(int id);
     Task <List<UserModel>> GetUsersByEvent(int eventId);
+    Task <int>  GetUserMediaCount(int userId);
+    Task<List<MediaModel>> GetUserMediaList(int userId);
+    
 }

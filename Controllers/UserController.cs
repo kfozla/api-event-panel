@@ -37,9 +37,8 @@ public class UserController: ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        var user = await _service.GetById(id);
         await _service.DeleteUser(id);
-        return Ok(user);
+        return Ok();
     }
 
     [HttpGet("event/{eventId}")]
@@ -47,5 +46,17 @@ public class UserController: ControllerBase
     {
         var userList = await _service.GetUsersByEvent(eventId);
         return Ok(userList);
+    }
+
+    [HttpGet("{id}/mediaCount")]
+    public async Task<ActionResult<List<UserModel>>> GetUserMediaCount(int id)
+    {
+        return Ok(await _service.GetUserMediaCount(id));
+    }
+
+    [HttpGet("{id}/media")]
+    public async Task<ActionResult<List<MediaModel>>> GetUserMediaList(int id)
+    {
+        return Ok(await _service.GetUserMediaList(id));
     }
 }

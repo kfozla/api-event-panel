@@ -61,7 +61,8 @@ public class MediaService:IMediaService
                 FilePath = filePath,
                 User = user,
                 UploadedOn = DateTime.UtcNow,
-                FileType =isImage ?"image":"video"
+                FileType =isImage ?"image":"video",
+                FileSize = media.Length,
             };
             if (isVideo)
             {

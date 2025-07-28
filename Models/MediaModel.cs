@@ -13,6 +13,7 @@ public class MediaModel
     public DateTime? DeletedOn { get; set; }
     public  string? PosterPath { get; set; }
     public string FileType { get; set; }
+    public long FileSize { get; set; }
     
     [ForeignKey("UserId")]
     public int UserId { get; set; }
