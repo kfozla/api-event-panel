@@ -45,6 +45,9 @@ public class EventRepository: IEventRepository
 
     public async Task UpdateEvent(EventModel eventModel)
     {
+        Console.WriteLine("Hello");
+        Console.WriteLine(eventModel.StartTime);
+       
         _context.Events.Update(eventModel);
         await _context.SaveChangesAsync();
     }

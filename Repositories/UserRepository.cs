@@ -15,12 +15,12 @@ public class UserRepository: IUserRepository
     
     public async Task<List<UserModel>> GetAll()
     {
-        return await _context.Users.ToListAsync();
+        return await _context.Users.Include(u => u.MediaList).ToListAsync();
     }
 
     public async Task<UserModel> GetById(int id)
     {
-        return await _context.Users.FindAsync(id);
+        return await _context.Users.Where(u => u.Id == id).Include(u => u.MediaList).FirstOrDefaultAsync();
     }
     public async Task AddUser(UserModel user)
     {

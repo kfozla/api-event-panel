@@ -1,5 +1,6 @@
 using api_event_panel.Models;
 using api_event_panel.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace api_event_panel.Services;
 
@@ -32,7 +33,10 @@ public class EventService: IEventService
 
     public async Task UpdateEvent(EventModel eventModel)
     {
+        Console.WriteLine(eventModel.StartTime);
         eventModel.ModifiedOn = DateTime.Now;
+        eventModel.StartTime = DateTime.SpecifyKind(eventModel.StartTime, DateTimeKind.Utc);
+        eventModel.EndTime = DateTime.SpecifyKind(eventModel.EndTime, DateTimeKind.Utc);
         await _repository.UpdateEvent(eventModel);
     }
 

@@ -44,20 +44,8 @@ public class EventController:ControllerBase
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutEvent(int id, [FromBody] EventModel updatedModel)
-    {
-        var existingEvent = await _service.GetEvent(id);
-        if (existingEvent == null)
-            return NotFound();
-
-        existingEvent.Name = updatedModel.Name;
-        existingEvent.Description = updatedModel.Description;
-        existingEvent.StartTime = updatedModel.StartTime;
-        existingEvent.EndTime = updatedModel.EndTime;
-        existingEvent.thumbnailUrl = updatedModel.thumbnailUrl;
-        existingEvent.ModifiedOn = DateTime.UtcNow;
-
-        await _service.UpdateEvent(existingEvent);
-        return Ok(existingEvent);
+    { await _service.UpdateEvent(updatedModel);
+        return Ok(updatedModel);
     }
 
 
