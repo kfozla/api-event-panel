@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 using api_event_panel.Services;
@@ -57,9 +58,12 @@ public class PanelUserController:ControllerBase
     }
 
     [HttpPost("{panelUserId}/uploadProfilePicture")]
-    public async Task<IActionResult> UploadProfilePicture(int panelUserId,[FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProfilePicture(int panelUserId,[FromForm] UploadProfilePictureRequest file)
     {
-        await _panelUserService.UploadProfilePicture(panelUserId, file);
+        if (file == null || file.File.Length == 0)
+            return BadRequest("No file uploaded");
+        await _panelUserService.UploadProfilePicture(panelUserId, file.File);
         return Ok();
     }
     
