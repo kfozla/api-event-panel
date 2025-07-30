@@ -2,10 +2,12 @@ using api_event_panel.Data;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 using api_event_panel.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api_event_panel.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/events")]
 public class EventController:ControllerBase

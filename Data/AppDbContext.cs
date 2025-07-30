@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<EventModel> Events { get; set; }
     public DbSet<MediaModel> Media { get; set; }
     public DbSet<UserModel> Users { get; set; }
+    public DbSet<PanelUserModel> PanelUsers { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +28,12 @@ public class AppDbContext : DbContext
             .HasMany(e => e.UserList)
             .WithOne(u => u.Event)
             .HasForeignKey(u => u.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<PanelUserModel>()
+            .HasMany(p => p.EventList)
+            .WithOne(e => e.PanelUser)
+            .HasForeignKey(e => e.PanelUserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 

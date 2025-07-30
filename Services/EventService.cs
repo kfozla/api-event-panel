@@ -44,5 +44,10 @@ public class EventService: IEventService
     {
         await _repository.DeleteEvent(id);
     }
+
+    public async Task<List<EventModel>> GetPanelUserEvents(int panelUserId)
+    {
+        return await _repository.GetPanelUserEvents(panelUserId);
+    }
     
 }

@@ -15,15 +15,19 @@ public class EventRepository: IEventRepository
     
     public async Task SaveEvent(EventModel eventModel)
     {
-        foreach (var user in eventModel.UserList)
+        if (eventModel.UserList != null)
         {
-            user.EventId = eventModel.Id;
-
-            foreach (var media in user.MediaList)
+            foreach (var user in eventModel.UserList)
             {
-                media.UserId = user.Id;
+                user.EventId = eventModel.Id;
+
+                foreach (var media in user.MediaList)
+                {
+                    media.UserId = user.Id;
+                }
             }
         }
+       
         // 1. EventModel'ü kaydet
         _context.Events.Add(eventModel);
         await _context.SaveChangesAsync();
@@ -57,6 +61,11 @@ public class EventRepository: IEventRepository
         _context.Events.Remove(await _context.Events.FindAsync(id));
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<EventModel>> GetPanelUserEvents(int panelUserId)
+    {
+        return await _context.Events.Where(e => e.PanelUserId == panelUserId).ToListAsync();
+    } 
 
    
 }

@@ -54,6 +54,9 @@ namespace api_event_panel.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PanelUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -66,6 +69,8 @@ namespace api_event_panel.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PanelUserId");
 
                     b.ToTable("Events");
                 });
@@ -112,6 +117,87 @@ namespace api_event_panel.Migrations
                     b.ToTable("Media");
                 });
 
+            modelBuilder.Entity("api_event_panel.Models.PanelUserModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PanelUsers");
+                });
+
+            modelBuilder.Entity("api_event_panel.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("api_event_panel.Models.UserModel", b =>
                 {
                     b.Property<int>("Id")
@@ -136,6 +222,17 @@ namespace api_event_panel.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("api_event_panel.Models.EventModel", b =>
+                {
+                    b.HasOne("api_event_panel.Models.PanelUserModel", "PanelUser")
+                        .WithMany("EventList")
+                        .HasForeignKey("PanelUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PanelUser");
                 });
 
             modelBuilder.Entity("api_event_panel.Models.MediaModel", b =>
@@ -163,6 +260,11 @@ namespace api_event_panel.Migrations
             modelBuilder.Entity("api_event_panel.Models.EventModel", b =>
                 {
                     b.Navigation("UserList");
+                });
+
+            modelBuilder.Entity("api_event_panel.Models.PanelUserModel", b =>
+                {
+                    b.Navigation("EventList");
                 });
 
             modelBuilder.Entity("api_event_panel.Models.UserModel", b =>

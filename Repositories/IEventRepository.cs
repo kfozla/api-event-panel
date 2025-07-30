@@ -8,5 +8,6 @@ public interface IEventRepository
     Task<List<EventModel>> GetEvents();
     Task UpdateEvent(EventModel eventModel);
     Task DeleteEvent(int id);
+    Task<List<EventModel>> GetPanelUserEvents(int panelUserId);
 
 }

@@ -52,8 +52,6 @@ public class MediaService:IMediaService
             {
                 await media.CopyToAsync(stream);
             }
-
-
             
             var mediaModel = new MediaModel
             {

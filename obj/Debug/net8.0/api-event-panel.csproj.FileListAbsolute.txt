@@ -168,3 +168,5 @@
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/obj/Debug/net8.0/api-event-panel.pdb
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/obj/Debug/net8.0/api-event-panel.genruntimeconfig.cache
 /Users/yusuf/Desktop/api-event-panel/api-event-panel/obj/Debug/net8.0/ref/api-event-panel.dll
+/Users/yusuf/Desktop/api-event-panel/api-event-panel/bin/Debug/net8.0/BCrypt.Net-Next.dll
+/Users/yusuf/Desktop/api-event-panel/api-event-panel/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
