@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,21 @@ public class EventService: IEventService
         _repository = eventRepository;
     }
 
-    public async Task SaveEvent(EventModel eventModel)
+    public async Task SaveEvent(EventModelRequest eventModelRequest)
     {
-        eventModel.CreatedOn = DateTime.Now;
-        eventModel.ModifiedOn = DateTime.Now;
-       
+        EventModel eventModel = new EventModel()
+        {
+            Name = eventModelRequest.name,
+            Description = eventModelRequest.description,
+            StartTime = eventModelRequest.startTime,
+            EndTime = eventModelRequest.endTime,
+            CreatedOn = DateTime.Now,
+            ModifiedOn = DateTime.Now,
+            Theme = eventModelRequest.theme,
+            PanelUserId = eventModelRequest.panelUserId,
+            thumbnailUrl = eventModelRequest.thumbnailUrl,
+            DomainName = eventModelRequest.domainName,
+        };
         await _repository.SaveEvent(eventModel);
        
     }
@@ -31,12 +42,19 @@ public class EventService: IEventService
         return await _repository.GetEvent(id);
     }
 
-    public async Task UpdateEvent(EventModel eventModel)
+    public async Task UpdateEvent(int id,UpdateEventRequest updateEventRequest)
     {
-        Console.WriteLine(eventModel.StartTime);
+        EventModel eventModel = _repository.GetEvent(id).Result;
+
+        eventModel.Name = updateEventRequest.name;
+        eventModel.Description = updateEventRequest.description;
+        eventModel.StartTime = updateEventRequest.startTime;
+        eventModel.EndTime = updateEventRequest.endTime;
         eventModel.ModifiedOn = DateTime.Now;
-        eventModel.StartTime = DateTime.SpecifyKind(eventModel.StartTime, DateTimeKind.Utc);
-        eventModel.EndTime = DateTime.SpecifyKind(eventModel.EndTime, DateTimeKind.Utc);
+        eventModel.Theme = updateEventRequest.theme;
+        eventModel.PanelUserId = updateEventRequest.panelUserId;
+        eventModel.thumbnailUrl = updateEventRequest.thumbnailUrl;
+        eventModel.DomainName = updateEventRequest.domainName;
         await _repository.UpdateEvent(eventModel);
     }
 

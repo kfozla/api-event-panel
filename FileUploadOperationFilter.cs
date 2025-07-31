@@ -1,22 +1,47 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace api_event_panel;
+using System.Linq;
 
 public class FileUploadOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var fileUploadMime = "multipart/form-data";
-        if (operation.RequestBody == null || !operation.RequestBody.Content.Any(x => x.Key.Equals(fileUploadMime, StringComparison.InvariantCultureIgnoreCase)))
+        var hasFileUpload = context.MethodInfo.GetParameters()
+            .Any(p => p.ParameterType == typeof(IFormFile) ||
+                      p.ParameterType == typeof(List<IFormFile>) ||
+                      p.ParameterType == typeof(IFormFile[]) ||
+                      (p.ParameterType.IsClass && p.ParameterType.GetProperties().Any(prop =>
+                          prop.PropertyType == typeof(IFormFile) ||
+                          prop.PropertyType == typeof(List<IFormFile>) ||
+                          prop.PropertyType == typeof(IFormFile[]))));
+
+        if (!hasFileUpload)
             return;
 
-        var fileParams = context.MethodInfo.GetParameters().Where(p => p.ParameterType == typeof(IFormFile));
-        operation.RequestBody.Content[fileUploadMime].Schema.Properties =
-            fileParams.ToDictionary(k => k.Name, v => new OpenApiSchema()
+        operation.RequestBody = new OpenApiRequestBody
+        {
+            Content =
             {
-                Type = "string",
-                Format = "binary"
-            });
+                ["multipart/form-data"] = new OpenApiMediaType
+                {
+                    Schema = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Properties = {
+                            ["media"] = new OpenApiSchema
+                            {
+                                Type = "array",
+                                Items = new OpenApiSchema
+                                {
+                                    Type = "string",
+                                    Format = "binary"
+                                }
+                            }
+                        },
+                        Required = new HashSet<string> { "media" }
+                    }
+                }
+            }
+        };
     }
 }

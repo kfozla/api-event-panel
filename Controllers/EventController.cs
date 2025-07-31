@@ -1,4 +1,5 @@
 using api_event_panel.Data;
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 using api_event_panel.Services;
@@ -24,10 +25,8 @@ public class EventController:ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostEvent([FromBody]EventModel eventModel)
+    public async Task<IActionResult> PostEvent([FromBody]EventModelRequest eventModel)
     {
-        eventModel.CreatedOn = DateTime.Now;
-        eventModel.ModifiedOn = DateTime.Now;
         await _service.SaveEvent(eventModel);
         return Ok();
     }
@@ -45,8 +44,8 @@ public class EventController:ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEvent(int id, [FromBody] EventModel updatedModel)
-    { await _service.UpdateEvent(updatedModel);
+    public async Task<IActionResult> PutEvent(int id, [FromBody] UpdateEventRequest updatedModel)
+    { await _service.UpdateEvent(id,updatedModel);
         return Ok(updatedModel);
     }
 

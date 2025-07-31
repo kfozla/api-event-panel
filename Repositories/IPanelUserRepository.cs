@@ -9,6 +9,7 @@ public interface IPanelUserRepository
     Task DeletePanelUser(int id);
     Task AddPanelUser(PanelUserModel panelUser);
     Task UploadProfilePicture(int panelUserId,string  filePath);
+    Task UpdateUser(PanelUserModel panelUser);
     
     
 }

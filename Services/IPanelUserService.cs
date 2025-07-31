@@ -11,4 +11,6 @@ public interface IPanelUserService
     Task DeletePanelUser(int id);
     Task<List<EventModel>> GetAllEvents(int id);
     Task UploadProfilePicture(int panelUserId,IFormFile file);
+    Task UpdateUser(int id, UpdateUser user);
+    Task UpdateUser(PanelUserModel panelUser);
 }

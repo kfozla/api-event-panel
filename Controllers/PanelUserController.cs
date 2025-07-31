@@ -66,5 +66,34 @@ public class PanelUserController:ControllerBase
         await _panelUserService.UploadProfilePicture(panelUserId, file.File);
         return Ok();
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUser user)
+    {
+        await _panelUserService.UpdateUser(id, user);
+        return Ok();
+    }
+
+    [HttpPut("{id}/changePassword")]
+    public async Task<IActionResult> ChangePassword(int id,ChangePassword changePassword)
+    {
+        var user = await _panelUserService.GetPanelUser(id);
+        
+        if (BCrypt.Net.BCrypt.Verify(changePassword.oldPassword,user.Password))
+        {
+            var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePassword.newPassword);
+            user.Password =hashedNewPassword;
+            await _panelUserService.UpdateUser(user);
+            return Ok();
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(changePassword.newPassword, user.Password))
+        {
+            return BadRequest("Password doesn't match");
+        }
+        else
+        {
+            return BadRequest("Error changing password");
+        }
+    }
     
 }

@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +13,12 @@ namespace api_event_panel.Controllers;
 public class UserController: ControllerBase
 {
     private readonly IUserService _service;
+    private readonly IMediaService _mediaService;
 
-    public UserController(IUserService service)
+    public UserController(IUserService service, IMediaService mediaService)
     {
         _service = service;
+        _mediaService = mediaService;
     }
 
     [HttpGet]
@@ -31,7 +34,7 @@ public class UserController: ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] UserModel user)
+    public async Task<ActionResult> Post([FromBody] UserModelRequest user)
     {
         await _service.AddUser(user);
         return Ok(user);
@@ -62,4 +65,16 @@ public class UserController: ControllerBase
     {
         return Ok(await _service.GetUserMediaList(id));
     }
+
+    [HttpPost("{id}/media")]
+    public async Task<ActionResult<MediaModel>> PostMedia(int id, [FromForm] List<IFormFile> mediaList)
+    {
+        if(mediaList.Count == 0)
+            return BadRequest();
+        
+        await _mediaService.SaveMedia(id, mediaList);
+        return Ok();
+    }
+
+   
 }

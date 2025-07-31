@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using  api_event_panel.Dtos;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace api_event_panel.Controllers;
@@ -21,7 +22,6 @@ public class AuthController:ControllerBase
         _context = context;
         _jwtService = jwtService;
     }
-
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {

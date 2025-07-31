@@ -54,4 +54,11 @@ public class PanelUserRepository: IPanelUserRepository
         _context.PanelUsers.Update(panelUser);
         await _context.SaveChangesAsync();
     }
+
+    public async Task UpdateUser(PanelUserModel panelUser)
+    {
+        _context.PanelUsers.Update(panelUser);
+        await _context.SaveChangesAsync();
+    }
+    
 }

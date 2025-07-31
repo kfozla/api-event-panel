@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 
@@ -7,7 +8,7 @@ public interface IUserService
 {
     Task<List<UserModel>> GetAll();
     Task<UserModel> GetById(int id);
-    Task AddUser(UserModel user);
+    Task AddUser(UserModelRequest user);
     Task DeleteUser(int id);
     Task <List<UserModel>> GetUsersByEvent(int eventId);
     Task <int>  GetUserMediaCount(int userId);

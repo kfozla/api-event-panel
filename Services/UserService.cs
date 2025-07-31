@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 
@@ -25,9 +26,16 @@ public class UserService: IUserService
     }
 
     
-    public async Task AddUser(UserModel user)
+    public async Task AddUser(UserModelRequest user)
     {
-        await _repository.AddUser(user);
+        UserModel userModel = new UserModel()
+        {
+            Username = user.Username,
+            SessionId = user.sessionId,
+            EventId = user.eventId,
+            MediaList = new List<MediaModel>()
+        };
+        await _repository.AddUser(userModel);
     }
 
     public async Task DeleteUser(int id)

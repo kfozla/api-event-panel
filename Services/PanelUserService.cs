@@ -1,3 +1,4 @@
+using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
 
@@ -53,6 +54,24 @@ public class PanelUserService: IPanelUserService
             await file.CopyToAsync(filestream);
         }
         await _panelUserRepository.UploadProfilePicture( panelUserId,filePath);
+    }
+
+    public async Task UpdateUser(int id, UpdateUser user)
+    {
+        var existingUser = await _panelUserRepository.GetPanelUser(id);
+        existingUser.Username = user.userName;
+        existingUser.FirstName = user.firstName;
+        existingUser.LastName = user.lastName;
+        existingUser.Email = user.email;
+        existingUser.PhoneNumber = user.phoneNumber;
+        existingUser.ModifiedOn = DateTime.Now;
+        
+        await _panelUserRepository.UpdateUser(existingUser);
+    }
+
+    public async Task UpdateUser(PanelUserModel panelUser)
+    {
+        await _panelUserRepository.UpdateUser(panelUser);
     }
     
 }
