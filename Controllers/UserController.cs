@@ -67,12 +67,12 @@ public class UserController: ControllerBase
     }
 
     [HttpPost("{id}/media")]
-    public async Task<ActionResult<MediaModel>> PostMedia(int id, [FromForm] List<IFormFile> mediaList)
+    public async Task<ActionResult<MediaModel>> PostMedia(int id, [FromForm] List<IFormFile> media)
     {
-        if(mediaList.Count == 0)
+        if(media.Count == 0)
             return BadRequest();
         
-        await _mediaService.SaveMedia(id, mediaList);
+        await _mediaService.SaveMedia(id, media);
         return Ok();
     }
 

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Repositories;
@@ -50,10 +51,12 @@ public class PanelUserController:ControllerBase
         return Ok();
     }
 
-    [HttpGet("events/{panelUserId}")]
-    public async Task<IActionResult> GetPanelUserEvents(int panelUserId)
+    [HttpGet("events/")]
+    public async Task<IActionResult> GetPanelUserEvents()
     {
-        var eventList = await _eventService.GetPanelUserEvents(panelUserId);
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        
+        var eventList = await _eventService.GetPanelUserEvents(jwtUserId);
         return Ok(eventList);
     }
 
@@ -95,5 +98,6 @@ public class PanelUserController:ControllerBase
             return BadRequest("Error changing password");
         }
     }
+    
     
 }
