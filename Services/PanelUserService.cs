@@ -23,9 +23,24 @@ public class PanelUserService: IPanelUserService
         return await _panelUserRepository.GetPanelUser(id);
     }
 
-    public async Task AddPanelUser(PanelUserModel panelUser)
+    public async Task AddPanelUser(PanelUserPostRequest panelUser)
     {
-        await _panelUserRepository.AddPanelUser(panelUser);
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(panelUser.Password);
+        PanelUserModel panelUserModel = new PanelUserModel()
+        {
+            Username = panelUser.Username,
+            FirstName = panelUser.FirstName,
+            LastName = panelUser.LastName,
+            Email = panelUser.Email,
+            Password = hashedPassword,
+            PhoneNumber = panelUser.PhoneNumber,
+            Role = panelUser.Role,
+            CreatedOn = DateTime.Now,
+            ModifiedOn = DateTime.Now,
+            DeletedOn = null,
+            EventList = new List<EventModel>(),
+        };
+        await _panelUserRepository.AddPanelUser(panelUserModel);
     }
 
     public async Task DeletePanelUser(int id)

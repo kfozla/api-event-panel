@@ -16,21 +16,30 @@ public class PanelUserController:ControllerBase
     private readonly IPanelUserService _panelUserService;
     private readonly IEventService _eventService;
 
-
     public PanelUserController(IPanelUserService panelUserRepository, IEventService eventService)
     {
         _panelUserService = panelUserRepository;
         _eventService=eventService;;
     }
     
-    [HttpGet]
+    [HttpGet("all")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> getAllPanelUsers()
     {
         var panelUserList = await _panelUserService.GetAllPanelUsers();
         return Ok(panelUserList);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetPanelUser()
+    {
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        var panelUser = await _panelUserService.GetPanelUser(jwtUserId);
+        return Ok(panelUser);
+    }
+
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetPanelUser(int id)
     {
         var panelUser = await _panelUserService.GetPanelUser(id);
@@ -38,13 +47,15 @@ public class PanelUserController:ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostPanelUser(PanelUserModel panelUser)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> PostPanelUser(PanelUserPostRequest panelUser)
     {
         await _panelUserService.AddPanelUser(panelUser);
         return Ok();
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePanelUser(int id)
     {
         await _panelUserService.DeletePanelUser(id);
@@ -59,27 +70,39 @@ public class PanelUserController:ControllerBase
         var eventList = await _eventService.GetPanelUserEvents(jwtUserId);
         return Ok(eventList);
     }
-
-    [HttpPost("{panelUserId}/uploadProfilePicture")]
-    [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadProfilePicture(int panelUserId,[FromForm] UploadProfilePictureRequest file)
+    [HttpGet("{id}/events/")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetPanelUserEventsById(int id)
     {
+        var eventList = await _eventService.GetPanelUserEvents(id);
+        return Ok(eventList);
+    }
+
+    [HttpPost("uploadProfilePicture")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProfilePicture([FromForm] UploadProfilePictureRequest file)
+    {
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
         if (file == null || file.File.Length == 0)
             return BadRequest("No file uploaded");
-        await _panelUserService.UploadProfilePicture(panelUserId, file.File);
+        await _panelUserService.UploadProfilePicture(jwtUserId, file.File);
         return Ok();
     }
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUser user)
+    [HttpPut]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUser user)
     {
-        await _panelUserService.UpdateUser(id, user);
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+        await _panelUserService.UpdateUser(jwtUserId, user);
         return Ok();
     }
 
-    [HttpPut("{id}/changePassword")]
-    public async Task<IActionResult> ChangePassword(int id,ChangePassword changePassword)
+    [HttpPut("changePassword")]
+    public async Task<IActionResult> ChangePassword(ChangePassword changePassword)
     {
-        var user = await _panelUserService.GetPanelUser(id);
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        var user = await _panelUserService.GetPanelUser(jwtUserId);
         
         if (BCrypt.Net.BCrypt.Verify(changePassword.oldPassword,user.Password))
         {

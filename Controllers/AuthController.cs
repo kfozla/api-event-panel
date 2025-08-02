@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api_event_panel.Data;
 using api_event_panel.Models;
 using api_event_panel.Services;
@@ -122,15 +123,23 @@ public class AuthController:ControllerBase
 
         return Ok("User registered successfully");
     }
-
-    [HttpGet("user/{username}")]
-    public async Task<IActionResult> GetUser(string username)
+    
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
     {
-        var user = await _context.PanelUsers.FirstOrDefaultAsync(u => u.Username == username);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+        if (userId == 0)
+            return Unauthorized("Invalid token or missing claim");
+
+        var user = await _context.PanelUsers.FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null)
-            return Unauthorized("Invalid username");
+            return Unauthorized("User not found");
+
         return Ok(user);
     }
+
 
     
 }

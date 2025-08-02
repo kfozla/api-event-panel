@@ -9,7 +9,7 @@ public interface IUserService
     Task<List<UserModel>> GetAll();
     Task<UserModel> GetById(int id);
     Task AddUser(UserModelRequest user);
-    Task DeleteUser(int id);
+    Task DeleteUser(int jwtUserId,int id);
     Task <List<UserModel>> GetUsersByEvent(int eventId);
     Task <int>  GetUserMediaCount(int userId);
     Task<List<MediaModel>> GetUserMediaList(int userId);

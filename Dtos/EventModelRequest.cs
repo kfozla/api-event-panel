@@ -9,5 +9,5 @@ public class EventModelRequest
     public string thumbnailUrl { get; set; }
     public string theme { get; set; }
     public string domainName { get; set; }
-    public int panelUserId { get; set; }
+   
 }

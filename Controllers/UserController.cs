@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api_event_panel.Dtos;
 using api_event_panel.Models;
 using api_event_panel.Services;
@@ -43,8 +44,22 @@ public class UserController: ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _service.DeleteUser(id);
-        return Ok();
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            await _service.DeleteUser(jwtUserId, id);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpGet("event/{eventId}")]

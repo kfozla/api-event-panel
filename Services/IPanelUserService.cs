@@ -7,7 +7,7 @@ public interface IPanelUserService
 {
     Task<List<PanelUserModel>> GetAllPanelUsers();
     Task<PanelUserModel> GetPanelUser(int id);
-    Task AddPanelUser(PanelUserModel panelUser);
+    Task AddPanelUser(PanelUserPostRequest panelUser);
     Task DeletePanelUser(int id);
     Task<List<EventModel>> GetAllEvents(int id);
     Task UploadProfilePicture(int panelUserId,IFormFile file);

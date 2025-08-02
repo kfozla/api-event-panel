@@ -38,11 +38,11 @@ public class EventRepository: IEventRepository
     public async Task<List<EventModel>> GetEvents()
     {
         return await _context.Events.ToListAsync();
-        
     }
 
     public async Task<EventModel> GetEvent(int id)
     {
+      
         return await _context.Events.FindAsync(id);
         
     }

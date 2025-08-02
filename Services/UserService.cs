@@ -8,11 +8,13 @@ public class UserService: IUserService
 {
     private readonly IUserRepository _repository;
     private readonly IMediaRepository _mediaRepository;
+    private readonly IEventRepository _eventRepository;
 
-    public UserService(IUserRepository repository, IMediaRepository mediaRepository)
+    public UserService(IUserRepository repository, IMediaRepository mediaRepository, IEventRepository eventRepository)
     {
         _repository = repository;
         _mediaRepository = mediaRepository;
+        _eventRepository = eventRepository;
     }
 
     public async Task<List<UserModel>> GetAll()
@@ -38,8 +40,15 @@ public class UserService: IUserService
         await _repository.AddUser(userModel);
     }
 
-    public async Task DeleteUser(int id)
+    public async Task DeleteUser(int jwtUserId,int id)
     {
+        var user = await _repository.GetById(id);
+        if (user == null)
+            throw new Exception($"User with id {id} not found");
+        var relatedEvent = await _eventRepository.GetEvent(user.EventId);
+        if (relatedEvent.PanelUserId != jwtUserId)
+            throw new UnauthorizedAccessException("Not allowed to delete this user");
+
         await _repository.DeleteUser(id);
     }
 

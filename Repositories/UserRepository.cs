@@ -30,8 +30,12 @@ public class UserRepository: IUserRepository
 
     public async Task DeleteUser(int id)
     {
-        _context.Users.Remove(new UserModel { Id = id });
-        await _context.SaveChangesAsync();
+        var user = await _context.Users.FindAsync(id);
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async  Task<List<UserModel>> GetUsersByEvent(int eventId)

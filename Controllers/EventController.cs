@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api_event_panel.Data;
 using api_event_panel.Dtos;
 using api_event_panel.Models;
@@ -27,52 +28,133 @@ public class EventController:ControllerBase
     [HttpPost]
     public async Task<IActionResult> PostEvent([FromBody]EventModelRequest eventModel)
     {
-        await _service.SaveEvent(eventModel);
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        await _service.SaveEvent(jwtUserId, eventModel);
         return Ok();
     }
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetEvents()
     {
-        
         return Ok(await _service.GetEvents());
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetEvent(int id)
     {
-        return Ok(await _service.GetEvent(id));
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
+
+            return Ok(await _service.GetEvent(jwtUserId, id, userRole));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+        
+        
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutEvent(int id, [FromBody] UpdateEventRequest updatedModel)
-    { await _service.UpdateEvent(id,updatedModel);
-        return Ok(updatedModel);
+    {
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
+
+            await _service.UpdateEvent(jwtUserId, id, updatedModel, userRole);
+            return Ok(updatedModel);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+       
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEvent(int id)
     {
-        var existingEvent = await _service.GetEvent(id);
-        if (existingEvent == null)
-            return NotFound();
+     
+        try
+        {
+            var JwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
 
-        await _service.DeleteEvent(id);
-        return Ok();
+            var existingEvent = await _service.GetEvent(JwtUserId, id, userRole);
+            if (existingEvent == null)
+                return NotFound();
+
+            await _service.DeleteEvent(id);
+            return Ok();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+        
     }
 
     [HttpGet("{id}/users")]
     public async Task<IActionResult> GetEventUsers(int id)
     {
-        var userList = await _userRepository.GetUsersByEvent(id);
-        return Ok(userList);
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
+
+            var eventModel = await _service.GetEvent(jwtUserId, id,userRole);
+            var userList = await _userRepository.GetUsersByEvent(eventModel.Id);
+            return Ok(userList);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     [HttpGet("{id}/medias")]
     public async Task<IActionResult> GetEventMedias(int id)
     {
-        var mediaList = await _mediaRepository.GetMediasByEventId( id);
-        return Ok(mediaList);
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
+
+            var eventModel = await _service.GetEvent(jwtUserId, id, userRole);
+            var mediaList = await _mediaRepository.GetMediasByEventId(eventModel.Id);
+            return Ok(mediaList);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+       
     }
+    
     
 }
