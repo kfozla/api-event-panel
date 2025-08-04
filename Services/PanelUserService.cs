@@ -8,10 +8,13 @@ public class PanelUserService: IPanelUserService
 {
     private readonly IPanelUserRepository _panelUserRepository;
     private readonly IEventRepository _eventRepository;
+    private readonly IServicePackageRepository _servicePackageRepository;
 
-    public PanelUserService(IPanelUserRepository panelUserRepository)
+    public PanelUserService(IPanelUserRepository panelUserRepository, IEventRepository eventRepository, IServicePackageRepository servicePackageRepository)
     {
         _panelUserRepository = panelUserRepository;
+        _eventRepository = eventRepository;
+        _servicePackageRepository = servicePackageRepository;
     }
     public async Task<List<PanelUserModel>> GetAllPanelUsers()
     {
@@ -88,5 +91,27 @@ public class PanelUserService: IPanelUserService
     {
         await _panelUserRepository.UpdateUser(panelUser);
     }
-    
+
+    public async Task ChangeServicePackage(int jwtUserId, int id, int servicePackageId)
+    {
+        if (servicePackageId == 0)
+            throw new Exception("Geçersiz paket ID");
+
+        var actingUser = await _panelUserRepository.GetPanelUser(jwtUserId); 
+        var targetUser = await _panelUserRepository.GetPanelUser(id);        
+        
+        if (actingUser.Role != "Admin" && jwtUserId != targetUser.Id)
+            throw new UnauthorizedAccessException("Bu işlem için yetkin yok");
+
+        var serviceModel = await _servicePackageRepository.GetServicePackage(servicePackageId);
+
+        targetUser.ServicePackage = serviceModel;
+        targetUser.ServicePackageAddedOn = DateTime.Now;
+        targetUser.ModifiedOn = DateTime.Now;
+        targetUser.ServicePackageExpiration = DateTime.Now.AddMonths(serviceModel.activeFor);
+        targetUser.ServicePackageId = serviceModel.Id;
+
+        await _panelUserRepository.UpdateUser(targetUser);
+    }
+
 }

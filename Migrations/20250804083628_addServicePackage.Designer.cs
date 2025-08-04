@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_event_panel.Data;
 
@@ -11,9 +12,11 @@ using api_event_panel.Data;
 namespace api_event_panel.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804083628_addServicePackage")]
+    partial class addServicePackage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,7 +169,7 @@ namespace api_event_panel.Migrations
                     b.Property<DateTime?>("ServicePackageExpiration")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ServicePackageId")
+                    b.Property<int?>("ServicePackageid")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -175,7 +178,7 @@ namespace api_event_panel.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServicePackageId");
+                    b.HasIndex("ServicePackageid");
 
                     b.ToTable("PanelUsers");
                 });
@@ -211,14 +214,14 @@ namespace api_event_panel.Migrations
 
             modelBuilder.Entity("api_event_panel.Models.ServicePackageModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("activeFor")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("activeFor")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .IsRequired()
@@ -227,17 +230,11 @@ namespace api_event_panel.Migrations
                     b.Property<int>("maxEvents")
                         .HasColumnType("int");
 
-                    b.Property<int?>("panelUserCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("price")
-                        .HasColumnType("int");
-
                     b.Property<string>("title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("ServicePackages");
                 });
@@ -294,7 +291,7 @@ namespace api_event_panel.Migrations
                 {
                     b.HasOne("api_event_panel.Models.ServicePackageModel", "ServicePackage")
                         .WithMany("activePanelUsers")
-                        .HasForeignKey("ServicePackageId");
+                        .HasForeignKey("ServicePackageid");
 
                     b.Navigation("ServicePackage");
                 });

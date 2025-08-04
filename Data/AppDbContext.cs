@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<UserModel> Users { get; set; }
     public DbSet<PanelUserModel> PanelUsers { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<ServicePackageModel> ServicePackages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -13,4 +13,5 @@ public interface IPanelUserService
     Task UploadProfilePicture(int panelUserId,IFormFile file);
     Task UpdateUser(int id, UpdateUser user);
     Task UpdateUser(PanelUserModel panelUser);
+    Task ChangeServicePackage(int jwtUserId,int id, int servicePackageId);
 }

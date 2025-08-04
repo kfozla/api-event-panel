@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace api_event_panel.Models;
 
 public class PanelUserModel
@@ -15,4 +17,9 @@ public class PanelUserModel
     public DateTime ModifiedOn { get; set; }
     public DateTime? DeletedOn { get; set; }
     public List<EventModel> EventList { get; set; }
+    public ServicePackageModel? ServicePackage { get; set; }
+    [ForeignKey("servicePackageId")]
+    public int? ServicePackageId { get; set; } 
+    public DateTime? ServicePackageExpiration { get; set; }
+    public DateTime? ServicePackageAddedOn { get; set; }
 }

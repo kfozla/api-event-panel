@@ -21,5 +21,5 @@ public class UserMappedevent
     public string Theme{get;set;}
     public string DomainName{get;set;}
     public int PanelUserId { get; set; }
-    public PanelUserModel?  PanelUser{get;set;}
+    public PanelUserDto?  PanelUser{get;set;}
 }

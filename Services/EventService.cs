@@ -38,11 +38,18 @@ public class EventService: IEventService
     {
         List<EventModel> events = await _repository.GetEvents();
         List<UserMappedevent> mappedEvents = new();
-
+       
         foreach (var e in events)
         {
             var panelUser = await _panelUserRepository.GetPanelUser(e.PanelUserId);
-    
+            var PanelUser = new PanelUserDto
+            {
+                Id = panelUser.Id,
+                Username = panelUser.Username,
+                Email = panelUser.Email,
+                Role = panelUser.Role
+            };
+
             mappedEvents.Add(new UserMappedevent
             {
                 Id = e.Id,
@@ -58,7 +65,7 @@ public class EventService: IEventService
                 ModifiedOn = e.ModifiedOn,
                 DeletedOn = e.DeletedOn,
                 UserList = e.UserList,
-                PanelUser = panelUser
+                PanelUser = PanelUser
             });
         }
         

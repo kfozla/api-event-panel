@@ -121,6 +121,23 @@ public class PanelUserController:ControllerBase
             return BadRequest("Error changing password");
         }
     }
+
+    [HttpPut("{id}/changeServicePackage")]
+    public async Task<IActionResult> ChangeServicePackage(int id, int servicePackageId)
+    {
+        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        try
+        {
+            await _panelUserService.ChangeServicePackage(jwtUserId, id, servicePackageId);
+            return Ok();
+
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        
+    }
     
     
 }

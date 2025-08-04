@@ -91,6 +91,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IPanelUserRepository, PanelUserRepository>();
 builder.Services.AddScoped<IPanelUserService, PanelUserService>();
+builder.Services.AddScoped<IServicePackageRepository, ServicePackageRepository>();
+builder.Services.AddScoped<IServicePackageService,ServicePackageService>();
 builder.Services.AddScoped<JwtService>();
 
 
