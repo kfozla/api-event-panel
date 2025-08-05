@@ -14,7 +14,9 @@ public class PanelUserRepository: IPanelUserRepository
     }
     public async Task<PanelUserModel> GetPanelUser(int id)
     {
-        return await _context.PanelUsers.FindAsync(id);
+        return await _context.PanelUsers
+            .Include(p => p.EventList) 
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async  Task<List<PanelUserModel>> GetAllPanelUsers()

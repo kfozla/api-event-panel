@@ -13,6 +13,7 @@ public class ServicePackageModel
     public List<PanelUserModel>? activePanelUsers { get; set; }
     public int? panelUserCount { get; set; }
     public int price { get; set; }
+    public int storageLimit { get; set; }
 
     
 }

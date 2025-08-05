@@ -22,4 +22,5 @@ public class PanelUserModel
     public int? ServicePackageId { get; set; } 
     public DateTime? ServicePackageExpiration { get; set; }
     public DateTime? ServicePackageAddedOn { get; set; }
+    public int? maxEvents { get; set; }
 }

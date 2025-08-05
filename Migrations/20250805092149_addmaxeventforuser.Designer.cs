@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api_event_panel.Data;
 
@@ -11,9 +12,11 @@ using api_event_panel.Data;
 namespace api_event_panel.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250805092149_addmaxeventforuser")]
+    partial class addmaxeventforuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +66,6 @@ namespace api_event_panel.Migrations
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("storageSize")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("thumbnailUrl")
                         .IsRequired()
@@ -184,45 +184,6 @@ namespace api_event_panel.Migrations
                     b.HasIndex("ServicePackageId");
 
                     b.ToTable("PanelUsers");
-                });
-
-            modelBuilder.Entity("api_event_panel.Models.Randevu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("createdOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("deletedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("end")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("panelUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("start")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("updatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Randevu");
                 });
 
             modelBuilder.Entity("api_event_panel.Models.RefreshToken", b =>

@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<PanelUserModel> PanelUsers { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<ServicePackageModel> ServicePackages { get; set; }
+    public DbSet<Randevu> Randevu { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

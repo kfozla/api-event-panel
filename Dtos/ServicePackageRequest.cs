@@ -7,4 +7,5 @@ public class ServicePackageRequest
     public int activeFor { get; set; }
     public int maxEvents { get; set; }
     public int price { get; set; }
+    public int storageLimit { get; set; }
 }

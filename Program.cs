@@ -93,6 +93,8 @@ builder.Services.AddScoped<IPanelUserRepository, PanelUserRepository>();
 builder.Services.AddScoped<IPanelUserService, PanelUserService>();
 builder.Services.AddScoped<IServicePackageRepository, ServicePackageRepository>();
 builder.Services.AddScoped<IServicePackageService,ServicePackageService>();
+builder.Services.AddScoped<IRandevuRepository, RandevuRepository>();
+builder.Services.AddScoped<IRandevuService,RandevuService>();
 builder.Services.AddScoped<JwtService>();
 
 

@@ -28,7 +28,7 @@ public class AuthController:ControllerBase
     {
         var user = await _context.PanelUsers.FirstOrDefaultAsync(u => u.Username == request.Username);
         if (user == null)
-            return Unauthorized("Invalid credentials");
+            return Unauthorized("Kullanıcı adı ve şifre yanlış");
 
         bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
         if (!isPasswordValid)
@@ -102,7 +102,10 @@ public class AuthController:ControllerBase
     {
         // Örnek: Kullanıcı adı daha önce alınmış mı kontrol et
         if (await _context.PanelUsers.AnyAsync(u => u.Username == request.Username))
-            return BadRequest("Username already exists");
+            return BadRequest("Kullanıcı adı zaten mevcut ");
+        
+        if (await _context.PanelUsers.AnyAsync(u => u.Email == request.Email))
+            return BadRequest("Email zaten mevcut");
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 

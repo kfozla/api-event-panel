@@ -15,11 +15,14 @@ public class PanelUserController:ControllerBase
 {
     private readonly IPanelUserService _panelUserService;
     private readonly IEventService _eventService;
+    private readonly IRandevuService _randevuService;
 
-    public PanelUserController(IPanelUserService panelUserRepository, IEventService eventService)
+    public PanelUserController(IPanelUserService panelUserRepository, IEventService eventService, IRandevuService randevuService)
     {
         _panelUserService = panelUserRepository;
-        _eventService=eventService;;
+        _eventService=eventService;
+        _randevuService=randevuService;
+        
     }
     
     [HttpGet("all")]
@@ -135,6 +138,25 @@ public class PanelUserController:ControllerBase
         catch (UnauthorizedAccessException)
         {
             return Forbid();
+        }
+        
+    }
+
+    [HttpGet("{id}/randevular")]
+    public async Task<IActionResult> Randevular(int id)
+    {
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            return Ok(await _randevuService.GetByPanelUserId(jwtUserId, id));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
         
     }

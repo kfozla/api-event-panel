@@ -8,11 +8,13 @@ public class MediaService:IMediaService
 {
     public readonly IMediaRepository _repository;
     public readonly IUserRepository _userRepository;
+    public readonly IEventRepository _eventRepository;
 
-    public MediaService(IMediaRepository repository,IUserRepository userRepository)
+    public MediaService(IMediaRepository repository,IUserRepository userRepository, IEventRepository eventRepository)
     {
         _repository = repository;
         _userRepository = userRepository;
+        _eventRepository = eventRepository;
     }
 
     public async Task<List<MediaModel>> GetMedias()
@@ -100,6 +102,9 @@ public class MediaService:IMediaService
                 // Optional: DB'ye poster path eklemek istersen
                 mediaModel.PosterPath = posterPath;
             }
+            var Event =  _eventRepository.GetEvent(user.EventId).Result;
+            Event.storageSize += media.Length;
+            await _eventRepository.UpdateEvent(Event);
 
             await _repository.SaveMedia(mediaModel);
         }
@@ -107,6 +112,10 @@ public class MediaService:IMediaService
 
     public async Task DeleteMedia(int id)
     {
+        var media = await _repository.GetMedia(id);
+        var user = _userRepository.GetById(media.UserId).Result;
+        var Event = _eventRepository.GetEvent(user.EventId).Result;
+        Event.storageSize -= media.FileSize;
         await _repository.DeleteMedia(id);
     }
 

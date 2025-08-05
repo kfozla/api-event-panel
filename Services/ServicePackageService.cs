@@ -37,6 +37,10 @@ public class ServicePackageService: IServicePackageService
         existingServicePackageModel.description = servicePackage.description;
         existingServicePackageModel.maxEvents = servicePackage.maxEvents;
         existingServicePackageModel.activeFor = servicePackage.activeFor;
+        existingServicePackageModel.storageLimit = servicePackage.storageLimit;
+        existingServicePackageModel.price = servicePackage.price;
+        
+        Console.WriteLine(existingServicePackageModel.storageLimit);
          await _servicePackageRepository.UpdateServicePackage(existingServicePackageModel);
     }
 

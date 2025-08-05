@@ -29,8 +29,15 @@ public class EventController:ControllerBase
     public async Task<IActionResult> PostEvent([FromBody]EventModelRequest eventModel)
     {
         var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-        await _service.SaveEvent(jwtUserId, eventModel);
-        return Ok();
+        try
+        {
+            await _service.SaveEvent(jwtUserId, eventModel);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     [HttpGet]
     [Authorize(Roles = "Admin")]

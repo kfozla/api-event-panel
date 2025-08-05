@@ -110,6 +110,7 @@ public class PanelUserService: IPanelUserService
         targetUser.ModifiedOn = DateTime.Now;
         targetUser.ServicePackageExpiration = DateTime.Now.AddMonths(serviceModel.activeFor);
         targetUser.ServicePackageId = serviceModel.Id;
+        targetUser.maxEvents = serviceModel.maxEvents;
 
         await _panelUserRepository.UpdateUser(targetUser);
     }

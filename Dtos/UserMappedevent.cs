@@ -22,4 +22,5 @@ public class UserMappedevent
     public string DomainName{get;set;}
     public int PanelUserId { get; set; }
     public PanelUserDto?  PanelUser{get;set;}
+    public long storageSize { get; set; }
 }

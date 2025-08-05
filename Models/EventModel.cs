@@ -26,4 +26,5 @@ public class EventModel
     public int PanelUserId { get; set; }
     [JsonIgnore]
     public PanelUserModel?  PanelUser{get;set;}
+    public long storageSize { get; set; }
 }

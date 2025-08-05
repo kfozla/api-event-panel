@@ -7,17 +7,24 @@ namespace api_event_panel.Services;
 
 public class EventService: IEventService
 {
-    public readonly IEventRepository _repository;
-    public readonly IPanelUserRepository _panelUserRepository;
+    private readonly IEventRepository _repository;
+    private readonly IPanelUserRepository _panelUserRepository;
+    private readonly IMediaService _mediaService;
 
-    public EventService(IEventRepository eventRepository, IPanelUserRepository panelUserRepository)
+    public EventService(IEventRepository eventRepository, IPanelUserRepository panelUserRepository, IMediaService mediaService)
     {
         _repository = eventRepository;
         _panelUserRepository = panelUserRepository;
+        _mediaService = mediaService;
     }
 
     public async Task SaveEvent(int id,EventModelRequest eventModelRequest)
     {
+        var panelUser = _panelUserRepository.GetPanelUser(id).Result;
+        if (panelUser.Role!="Admin" && panelUser.maxEvents <= panelUser.EventList.Count)
+        {
+            throw new Exception("Etkinlik limitine erişildi");
+        }
         EventModel eventModel = new EventModel()
         {
             Name = eventModelRequest.name,
@@ -65,7 +72,8 @@ public class EventService: IEventService
                 ModifiedOn = e.ModifiedOn,
                 DeletedOn = e.DeletedOn,
                 UserList = e.UserList,
-                PanelUser = PanelUser
+                PanelUser = PanelUser,
+                storageSize = e.storageSize
             });
         }
         
@@ -115,6 +123,20 @@ public class EventService: IEventService
     public async Task<List<EventModel>> GetPanelUserEvents(int panelUserId)
     {
         return await _repository.GetPanelUserEvents(panelUserId);
+    }
+
+    public async Task<long> GetEventStorageSize(int eventId)
+    {
+        var Event = await _repository.GetEvent(eventId);
+        
+        List<MediaModel> mediaList = _mediaService.GetMediasByEventId(Event.Id).Result;
+        
+        long size = 0;
+        foreach (var media in mediaList)
+        {
+            size += media.FileSize;
+        }
+        return size;
     }
     
 }
