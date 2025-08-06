@@ -29,7 +29,22 @@ public class RandevuController: ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        return Ok(await _randevuService.GetById(id));
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;       
+
+            return Ok(await _randevuService.GetById(jwtUserId, id,userRole));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        
     }
 
     [HttpDelete("{id}")]
@@ -37,12 +52,17 @@ public class RandevuController: ControllerBase
     {
         try
         {
-            await _randevuService.Delete(id);
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            await _randevuService.Delete(jwtUserId, id);
             return Ok();
         }
-        catch (Exception e)
+        catch (UnauthorizedAccessException)
         {
-            return BadRequest(e.Message);
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
         
         

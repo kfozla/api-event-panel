@@ -12,6 +12,8 @@ public class Randevu
     public DateTime updatedOn { get; set; }
     public DateTime? deletedOn { get; set; }
     public string description { get; set; }
-    [ForeignKey("panelUserId")]
+    
     public int panelUserId { get; set; }
+    [ForeignKey("panelUserId")]
+    public PanelUserModel panelUser { get; set; }
 }

@@ -29,6 +29,7 @@ public class RandevuService:IRandevuService
             createdOn = randevu.createdOn,
             updatedOn = DateTime.Now,
             deletedOn = null,
+            panelUser = panelUser
         };
         
         await _randevuRepository.Add(Randevu);
@@ -50,22 +51,24 @@ public class RandevuService:IRandevuService
         Randevu.panelUserId = panelUser.Id;
         Randevu.createdOn = randevu.createdOn;
         Randevu.updatedOn = DateTime.Now;
+        Randevu.panelUser = panelUser;
        
         await _randevuRepository.Update(Randevu);
     }
 
-    public async Task Delete(int id)
+    public async Task Delete(int jwtUserId,int id)
     {
-        try
-        {
+            var panelUser = await _panelUserRepository.GetPanelUser(jwtUserId);
+            
             var Randevu = await _randevuRepository.GetById(id);
-
-            await _randevuRepository.Delete(Randevu.Id);
-        }
-        catch (Exception e)
-        {
-           throw new Exception($"Delete Randevu failed. Id: {id}", e);
-        }
+            if (panelUser.Role =="Admin" ||  panelUser.Id == Randevu.panelUserId)
+            {
+                await _randevuRepository.Delete(Randevu.Id);
+                return;
+            }
+            throw new UnauthorizedAccessException();
+           
+       
         
     }
 
@@ -74,9 +77,15 @@ public class RandevuService:IRandevuService
         return await _randevuRepository.GetAll();
     }
 
-    public async Task<Randevu> GetById(int id)
+    public async Task<Randevu> GetById(int jwtUserId, int id,string userRole)
     {
-        return await _randevuRepository.GetById(id);
+
+        var randevu = _randevuRepository.GetById(id).Result;
+        if (userRole == "Admin" || randevu.panelUserId == jwtUserId)
+        {
+            return randevu;
+        }
+        throw new UnauthorizedAccessException();
     }
 
     public async Task<List<Randevu>> GetByPanelUserId(int jwtUserId, int id)
