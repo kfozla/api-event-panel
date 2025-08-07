@@ -111,6 +111,7 @@ public class PanelUserService: IPanelUserService
         targetUser.ServicePackageExpiration = DateTime.Now.AddMonths(serviceModel.activeFor);
         targetUser.ServicePackageId = serviceModel.Id;
         targetUser.maxEvents = serviceModel.maxEvents;
+        targetUser.storageLimit = (long)serviceModel.storageLimit*1024*1024*1024;
 
         await _panelUserRepository.UpdateUser(targetUser);
     }

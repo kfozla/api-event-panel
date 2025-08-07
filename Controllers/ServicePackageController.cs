@@ -20,39 +20,76 @@ public class ServicePackageController: ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetServicePackage(int id)
     {
-        var servicePackage= await _servicePackageService.GetServicePackage(id);
-        
-        return Ok(servicePackage);
+        try
+        {
+            var servicePackage = await _servicePackageService.GetServicePackage(id);
+            return Ok(servicePackage);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
     [HttpGet]
     public async Task<IActionResult> GetServicePackages()
     {
-        var servicePackageList= await _servicePackageService.GetServicePackages();
+        try
+        {
+            var servicePackageList = await _servicePackageService.GetServicePackages();
+
+            return Ok(servicePackageList);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
         
-        return Ok(servicePackageList);
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> PostServicePackage(ServicePackageRequest servicePackage)
     {
-        await _servicePackageService.AddServicePackage(servicePackage);
-        return Ok(servicePackage);
+        try
+        {
+            await _servicePackageService.AddServicePackage(servicePackage);
+            return Ok(servicePackage);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteServicePackage(int id)
     {
-        await _servicePackageService.DeleteServicePackage(id);
-        return Ok();
+        try
+        {
+            await _servicePackageService.DeleteServicePackage(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> PutServicePackage(int id, ServicePackageRequest servicePackage)
     {
-        await _servicePackageService.UpdateServicePackage(id,servicePackage);
-        return Ok();
+        try
+        {
+            await _servicePackageService.UpdateServicePackage(id, servicePackage);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 }

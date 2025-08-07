@@ -10,18 +10,30 @@ public class EventService: IEventService
     private readonly IEventRepository _repository;
     private readonly IPanelUserRepository _panelUserRepository;
     private readonly IMediaService _mediaService;
+    private readonly IServicePackageService _servicePackageService;
 
-    public EventService(IEventRepository eventRepository, IPanelUserRepository panelUserRepository, IMediaService mediaService)
+    public EventService(IEventRepository eventRepository, IPanelUserRepository panelUserRepository, IMediaService mediaService, IServicePackageService servicePackageService)
     {
         _repository = eventRepository;
         _panelUserRepository = panelUserRepository;
         _mediaService = mediaService;
+        _servicePackageService = servicePackageService;
     }
 
     public async Task SaveEvent(int id,EventModelRequest eventModelRequest)
     {
         var panelUser = _panelUserRepository.GetPanelUser(id).Result;
-        if (panelUser.Role!="Admin" && panelUser.maxEvents <= panelUser.EventList.Count)
+        ServicePackageModel servicePackage;
+        if (panelUser.ServicePackageId == null || panelUser.ServicePackageId.Value == 0)
+        {
+            throw new Exception("Servis Paketi Bulunamadı");
+        }
+        else
+        {
+            servicePackage =  _servicePackageService.GetServicePackage(panelUser.ServicePackageId.Value).Result;
+        }
+        
+        if (panelUser.Role!="Admin" && servicePackage.maxEvents <= panelUser.EventList.Count)
         {
             throw new Exception("Etkinlik limitine erişildi");
         }
@@ -117,7 +129,10 @@ public class EventService: IEventService
 
     public async Task DeleteEvent(int id)
     {
-        await _repository.DeleteEvent(id);
+        var eventModel = await _repository.GetEvent(id);
+        var panelUser = _panelUserRepository.GetPanelUser(eventModel.PanelUserId);
+        panelUser.Result.usingStorage -= eventModel.storageSize;
+        await _repository.DeleteEvent(eventModel.Id);
     }
 
     public async Task<List<EventModel>> GetPanelUserEvents(int panelUserId)

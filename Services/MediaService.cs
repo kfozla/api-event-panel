@@ -6,15 +6,17 @@ namespace api_event_panel.Services;
 
 public class MediaService:IMediaService
 {
-    public readonly IMediaRepository _repository;
-    public readonly IUserRepository _userRepository;
-    public readonly IEventRepository _eventRepository;
+    private readonly IMediaRepository _repository;
+    private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
+    private readonly IPanelUserRepository _panelUserRepository;
 
-    public MediaService(IMediaRepository repository,IUserRepository userRepository, IEventRepository eventRepository)
+    public MediaService(IMediaRepository repository,IUserRepository userRepository, IEventRepository eventRepository, IPanelUserRepository panelUserRepository)
     {
         _repository = repository;
         _userRepository = userRepository;
         _eventRepository = eventRepository;
+        _panelUserRepository = panelUserRepository;
     }
 
     public async Task<List<MediaModel>> GetMedias()
@@ -27,15 +29,34 @@ public class MediaService:IMediaService
         return await _repository.GetMedia(id);
     }
 
-    public async Task SaveMedia(int userId,List<IFormFile> mediaList)
+    public async Task SaveMedia(string username,string sessionId,List<IFormFile> mediaList)
     {
         if (!Directory.Exists("uploads"))
             Directory.CreateDirectory("uploads");
         
-        UserModel user = _userRepository.GetById(userId).Result;
+        
+        UserModel user;
+        EventModel e;
+        PanelUserModel panelUser;
+        try
+        {
+             user = _userRepository.GetByUsernameAndSession(username,sessionId).Result;
+             e = _eventRepository.GetEvent(user.EventId).Result;
+             panelUser = _panelUserRepository.GetPanelUser(e.PanelUserId).Result;
+        }
+        catch (Exception)
+        {
+            throw new Exception("bilgileri getirirken hata oluştu");
+        }
+
+        if (panelUser.usingStorage >= panelUser.storageLimit)
+        {
+            throw new Exception("Depolama limitine ulaşıldı");
+        }
+        
         foreach (var media in mediaList)
         {
-            var newFileName = user.Username + "-" + media.FileName;
+            var newFileName = user.Username + "-" +user.SessionId + media.FileName;
             
             var isImage = media.ContentType.StartsWith("image/");
             var isVideo = media.ContentType.StartsWith("video/");
@@ -102,21 +123,40 @@ public class MediaService:IMediaService
                 // Optional: DB'ye poster path eklemek istersen
                 mediaModel.PosterPath = posterPath;
             }
-            var Event =  _eventRepository.GetEvent(user.EventId).Result;
-            Event.storageSize += media.Length;
-            await _eventRepository.UpdateEvent(Event);
+            e =  _eventRepository.GetEvent(user.EventId).Result;
+            e.storageSize += media.Length;
+            await _eventRepository.UpdateEvent(e);
+            
+            panelUser.usingStorage+= media.Length;
+            await _panelUserRepository.UpdateUser(panelUser);
 
             await _repository.SaveMedia(mediaModel);
         }
     }
 
-    public async Task DeleteMedia(int id)
+    public async Task DeleteMedia(string username,string sessionId,int id,string? panelUserRole)
     {
         var media = await _repository.GetMedia(id);
         var user = _userRepository.GetById(media.UserId).Result;
         var Event = _eventRepository.GetEvent(user.EventId).Result;
-        Event.storageSize -= media.FileSize;
-        await _repository.DeleteMedia(id);
+        var panelUser = _panelUserRepository.GetPanelUser(Event.PanelUserId).Result;
+        if (user.Username == username && user.SessionId == sessionId)
+        {
+            
+            Event.storageSize -= media.FileSize;
+            await _eventRepository.UpdateEvent(Event);
+            panelUser.usingStorage -= media.FileSize;
+            await _panelUserRepository.UpdateUser(panelUser);
+        
+            await _repository.DeleteMedia(id);
+        }
+
+        if (panelUserRole != null)
+        {
+            await _repository.DeleteMedia(id);
+        }
+        throw new UnauthorizedAccessException();
+        
     }
 
     public async Task<List<MediaModel>> GetMediaByUserId(int userId)

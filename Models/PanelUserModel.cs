@@ -23,4 +23,6 @@ public class PanelUserModel
     public DateTime? ServicePackageExpiration { get; set; }
     public DateTime? ServicePackageAddedOn { get; set; }
     public int? maxEvents { get; set; }
+    public long usingStorage { get; set; }
+    public long storageLimit {get; set;}
 }

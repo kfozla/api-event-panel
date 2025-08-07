@@ -40,8 +40,7 @@ public class ServicePackageService: IServicePackageService
         existingServicePackageModel.storageLimit = servicePackage.storageLimit;
         existingServicePackageModel.price = servicePackage.price;
         
-        Console.WriteLine(existingServicePackageModel.storageLimit);
-         await _servicePackageRepository.UpdateServicePackage(existingServicePackageModel);
+        await _servicePackageRepository.UpdateServicePackage(existingServicePackageModel);
     }
 
     public async Task DeleteServicePackage(int servicePackageId)

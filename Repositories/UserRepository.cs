@@ -45,4 +45,9 @@ public class UserRepository: IUserRepository
             .Include(u => u.MediaList)  // Medya listesini de dahil et
             .ToListAsync();
     }
+
+    public async Task<UserModel> GetByUsernameAndSession(string username,string sessionId)
+    {
+        return await _context.Users.Where(u => u.Username == username && u.SessionId == sessionId ).FirstOrDefaultAsync();
+    }
 }

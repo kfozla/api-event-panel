@@ -67,4 +67,9 @@ public class UserService: IUserService
     {
         return await _mediaRepository.GetMediaByUserId(userId);
     }
+
+    public async Task<UserModel> GetUserByUsernameAndSessionId(string username, string sessionId)
+    {
+        return await _repository.GetByUsernameAndSession(username, sessionId);
+    }
 }

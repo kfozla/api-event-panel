@@ -9,4 +9,5 @@ public interface IUserRepository
     Task AddUser(UserModel user);
     Task DeleteUser(int id);
     Task<List<UserModel>> GetUsersByEvent(int eventId);
+    Task<UserModel> GetByUsernameAndSession(string username,string session);
 }

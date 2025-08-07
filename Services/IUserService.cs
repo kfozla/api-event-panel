@@ -13,5 +13,6 @@ public interface IUserService
     Task <List<UserModel>> GetUsersByEvent(int eventId);
     Task <int>  GetUserMediaCount(int userId);
     Task<List<MediaModel>> GetUserMediaList(int userId);
+    Task<UserModel> GetUserByUsernameAndSessionId(string username, string sessionId);
     
 }

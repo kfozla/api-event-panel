@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace api_event_panel.Controllers;
 
-[Authorize]
+
 [ApiController]
 [Route("api/user")]
 public class UserController: ControllerBase
@@ -25,23 +25,46 @@ public class UserController: ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserModel>>> Get()
     {
-        return Ok(await _service.GetAll());
+        try
+        {
+            return Ok(await _service.GetAll());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserModel>> Get(int id)
     {
-        return Ok( await _service.GetById(id));
+        try
+        {
+            return Ok(await _service.GetById(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+       
     }
 
     [HttpPost]
     public async Task<ActionResult> Post([FromBody] UserModelRequest user)
     {
-        await _service.AddUser(user);
-        return Ok(user);
+        try
+        {
+            await _service.AddUser(user);
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> Delete(int id)
     {
         try
@@ -65,30 +88,77 @@ public class UserController: ControllerBase
     [HttpGet("event/{eventId}")]
     public async Task<ActionResult<List<UserModel>>> GetUsersByEvent(int eventId)
     {
-        var userList = await _service.GetUsersByEvent(eventId);
-        return Ok(userList);
+        try
+        {
+            var userList = await _service.GetUsersByEvent(eventId);
+            return Ok(userList);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpGet("{id}/mediaCount")]
     public async Task<ActionResult<List<UserModel>>> GetUserMediaCount(int id)
     {
-        return Ok(await _service.GetUserMediaCount(id));
+        try
+        {
+            return Ok(await _service.GetUserMediaCount(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpGet("{id}/media")]
     public async Task<ActionResult<List<MediaModel>>> GetUserMediaList(int id)
     {
-        return Ok(await _service.GetUserMediaList(id));
+        try
+        {
+            return Ok(await _service.GetUserMediaList(id));
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [RequestSizeLimit(1073741824)]//1Gb
+    [HttpPost("{id}/media")]
+    public async Task<ActionResult<MediaModel>> PostMedia([FromForm] string username,[FromForm] string sessionId, [FromForm] List<IFormFile> file)
+    {
+        if(file.Count == 0)
+            return BadRequest("No media file found");
+        try
+        {
+            await _mediaService.SaveMedia(username ,sessionId,file);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
-    [HttpPost("{id}/media")]
-    public async Task<ActionResult<MediaModel>> PostMedia(int id, [FromForm] List<IFormFile> media)
+    [HttpGet("getByUsername/{username}/sessionId/{sessionId}")]
+    public async Task<ActionResult<UserModel>> GetByUsernameAndSessionId(string username, string sessionId)
     {
-        if(media.Count == 0)
-            return BadRequest();
-        
-        await _mediaService.SaveMedia(id, media);
-        return Ok();
+        try
+        {
+            var user = await _service.GetUserByUsernameAndSessionId(username, sessionId);
+            if (user == null)
+                return NotFound("User not found");
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
    

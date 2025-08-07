@@ -29,99 +29,177 @@ public class PanelUserController:ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> getAllPanelUsers()
     {
-        var panelUserList = await _panelUserService.GetAllPanelUsers();
-        return Ok(panelUserList);
+        try
+        {
+            var panelUserList = await _panelUserService.GetAllPanelUsers();
+            return Ok(panelUserList);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpGet]
     public async Task<IActionResult> GetPanelUser()
     {
-        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-        var panelUser = await _panelUserService.GetPanelUser(jwtUserId);
-        return Ok(panelUser);
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var panelUser = await _panelUserService.GetPanelUser(jwtUserId);
+            return Ok(panelUser);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetPanelUser(int id)
     {
-        var panelUser = await _panelUserService.GetPanelUser(id);
-        return Ok(panelUser);
+        try
+        {
+            var panelUser = await _panelUserService.GetPanelUser(id);
+            return Ok(panelUser);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> PostPanelUser(PanelUserPostRequest panelUser)
     {
-        await _panelUserService.AddPanelUser(panelUser);
-        return Ok();
+        try
+        {
+            await _panelUserService.AddPanelUser(panelUser);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePanelUser(int id)
     {
-        await _panelUserService.DeletePanelUser(id);
-        return Ok();
+        try
+        {
+            await _panelUserService.DeletePanelUser(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet("events/")]
     public async Task<IActionResult> GetPanelUserEvents()
     {
-        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+            var eventList = await _eventService.GetPanelUserEvents(jwtUserId);
+            return Ok(eventList);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
         
-        var eventList = await _eventService.GetPanelUserEvents(jwtUserId);
-        return Ok(eventList);
     }
     [HttpGet("{id}/events/")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetPanelUserEventsById(int id)
     {
-        var eventList = await _eventService.GetPanelUserEvents(id);
-        return Ok(eventList);
+        try
+        {
+            var eventList = await _eventService.GetPanelUserEvents(id);
+            return Ok(eventList);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpPost("uploadProfilePicture")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> UploadProfilePicture([FromForm] UploadProfilePictureRequest file)
     {
-        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-        if (file == null || file.File.Length == 0)
-            return BadRequest("No file uploaded");
-        await _panelUserService.UploadProfilePicture(jwtUserId, file.File);
-        return Ok();
+            if (file == null || file.File.Length == 0)
+                return BadRequest("No file uploaded");
+            await _panelUserService.UploadProfilePicture(jwtUserId, file.File);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
     [HttpPut]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUser user)
     {
-        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-        await _panelUserService.UpdateUser(jwtUserId, user);
-        return Ok();
+            await _panelUserService.UpdateUser(jwtUserId, user);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 
     [HttpPut("changePassword")]
     public async Task<IActionResult> ChangePassword(ChangePassword changePassword)
     {
-        var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-        var user = await _panelUserService.GetPanelUser(jwtUserId);
-        
-        if (BCrypt.Net.BCrypt.Verify(changePassword.oldPassword,user.Password))
+        try
         {
-            var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePassword.newPassword);
-            user.Password =hashedNewPassword;
-            await _panelUserService.UpdateUser(user);
-            return Ok();
-        }
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var user = await _panelUserService.GetPanelUser(jwtUserId);
 
-        if (!BCrypt.Net.BCrypt.Verify(changePassword.newPassword, user.Password))
-        {
-            return BadRequest("Password doesn't match");
+            if (BCrypt.Net.BCrypt.Verify(changePassword.oldPassword, user.Password))
+            {
+                var hashedNewPassword = BCrypt.Net.BCrypt.HashPassword(changePassword.newPassword);
+                user.Password = hashedNewPassword;
+                await _panelUserService.UpdateUser(user);
+                return Ok();
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(changePassword.newPassword, user.Password))
+            {
+                return BadRequest("Password doesn't match");
+            }
+            else
+            {
+                return BadRequest("Error changing password");
+            }
         }
-        else
+        catch (Exception e)
         {
-            return BadRequest("Error changing password");
+            return BadRequest(e.Message);
         }
     }
 

@@ -106,4 +106,24 @@ public class RandevuController: ControllerBase
         }
         
     }
+
+    [HttpGet("panelUser/{panelUserId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetByPanelUser(int panelUserId)
+    {
+        try
+        {
+            var jwtUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            return Ok(await _randevuService.GetByPanelUserId(jwtUserId, panelUserId));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+         
+    }
 }

@@ -179,6 +179,12 @@ namespace api_event_panel.Migrations
                     b.Property<int?>("maxEvents")
                         .HasColumnType("int");
 
+                    b.Property<int>("storageLimit")
+                        .HasColumnType("int");
+
+                    b.Property<long>("usingStorage")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ServicePackageId");

@@ -90,12 +90,14 @@ public class RandevuService:IRandevuService
 
     public async Task<List<Randevu>> GetByPanelUserId(int jwtUserId, int id)
     {
-        var  panelUser = _panelUserRepository.GetPanelUser(id).Result;
-        if(panelUser.Id != jwtUserId)
-            throw new UnauthorizedAccessException();
-        
-        var randevuList = await _randevuRepository.GetByPanelUserId(panelUser.Id);
-        return randevuList;
+        var  randevuUser = _panelUserRepository.GetPanelUser(id).Result;
+        var  panelUser = await _panelUserRepository.GetPanelUser(jwtUserId);
+        if (panelUser.Role == "Admin" || randevuUser.Id == jwtUserId)
+        {
+            var randevuList = await _randevuRepository.GetByPanelUserId(randevuUser.Id);
+            return randevuList;
+        }
+        throw new UnauthorizedAccessException();
     }
     
 }
