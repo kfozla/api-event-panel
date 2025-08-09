@@ -33,7 +33,7 @@ public class EventService: IEventService
             servicePackage =  _servicePackageService.GetServicePackage(panelUser.ServicePackageId.Value).Result;
         }
         
-        if (panelUser.Role!="Admin" && servicePackage.maxEvents < panelUser.EventList.Count)
+        if (panelUser.Role!="Admin" && servicePackage.maxEvents <= panelUser.EventList.Count)
         {
             throw new Exception("Etkinlik limitine erişildi");
         }
