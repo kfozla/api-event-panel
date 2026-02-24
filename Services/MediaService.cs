@@ -56,7 +56,7 @@ public class MediaService:IMediaService
         
         foreach (var media in mediaList)
         {
-            var newFileName = user.Username + "-" +user.SessionId + media.FileName;
+            var newFileName = user.Username + "-" +user.SessionId + DateTime.Now + media.FileName ;
             
             var isImage = media.ContentType.StartsWith("image/");
             var isVideo = media.ContentType.StartsWith("video/");
@@ -134,29 +134,29 @@ public class MediaService:IMediaService
         }
     }
 
-    public async Task DeleteMedia(string username,string sessionId,int id,string? panelUserRole)
+    public async Task DeleteMedia(string username, string sessionId, int id, string? panelUserRole)
     {
         var media = await _repository.GetMedia(id);
-        var user = _userRepository.GetById(media.UserId).Result;
-        var Event = _eventRepository.GetEvent(user.EventId).Result;
-        var panelUser = _panelUserRepository.GetPanelUser(Event.PanelUserId).Result;
-        if (user.Username == username && user.SessionId == sessionId)
+        var user = await _userRepository.GetById(media.UserId);
+        var @event = await _eventRepository.GetEvent(user.EventId);
+        var panelUser = await _panelUserRepository.GetPanelUser(@event.PanelUserId);
+    
+        // Yetki kontrolü
+        if ((user.Username == username && user.SessionId == sessionId) || panelUserRole != null)
         {
-            
-            Event.storageSize -= media.FileSize;
-            await _eventRepository.UpdateEvent(Event);
+            // Storage güncellemeleri
+            @event.storageSize -= media.FileSize;
+            await _eventRepository.UpdateEvent(@event);
+        
             panelUser.usingStorage -= media.FileSize;
             await _panelUserRepository.UpdateUser(panelUser);
         
+            // Sil
             await _repository.DeleteMedia(id);
+            return; // ✅ Başarılı olunca return
         }
-
-        if (panelUserRole != null)
-        {
-            await _repository.DeleteMedia(id);
-        }
-        throw new UnauthorizedAccessException();
-        
+    
+        throw new UnauthorizedAccessException(); // ❌ Sadece yetkisizse throw
     }
 
     public async Task<List<MediaModel>> GetMediaByUserId(int userId)
