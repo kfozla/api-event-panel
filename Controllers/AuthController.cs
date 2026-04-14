@@ -55,17 +55,41 @@ public class AuthController:ControllerBase
 
         _context.RefreshTokens.RemoveRange(oldTokens);
         await _context.SaveChangesAsync();
+        
+        Response.Cookies.Append("rt", refreshTokenValue,new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Path = "/api/auth/refresh",
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
 
-        return Ok(new { accessToken, refreshToken = refreshTokenValue });
+        return Ok(new { accessToken });
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+    public async Task<IActionResult> Refresh()
     {
-        var token = await _context.RefreshTokens.FirstOrDefaultAsync(r => r.Token == request.RefreshToken && !r.IsRevoked);
+        if (!Request.Cookies.TryGetValue("rt", out var refreshTokenValue) ||  string.IsNullOrWhiteSpace(refreshTokenValue))
+        {
+           return Unauthorized("invalid or expired refresh token");
+        }
+        
+        var token = await _context.RefreshTokens.FirstOrDefaultAsync(r => r.Token == refreshTokenValue && !r.IsRevoked);
 
         if (token == null || token.Expires < DateTime.UtcNow)
+        {
+            Response.Cookies.Delete("rt", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Path = "/api/auth/refresh",
+            });
             return Unauthorized("Invalid or expired refresh token");
+        }
+            
 
         var user = await _context.PanelUsers.FindAsync(token.UserId);
         var newAccessToken = _jwtService.GenerateAccessToken(user);
@@ -77,24 +101,43 @@ public class AuthController:ControllerBase
         {
             UserId = user.Id,
             Token = newRefreshToken,
-            Expires = DateTime.UtcNow.AddDays(7)
+            IsRevoked = false,
+            Expires = DateTime.UtcNow.AddDays(7),
+            Created = DateTime.UtcNow
         });
 
         await _context.SaveChangesAsync();
+        Response.Cookies.Append("rt",newRefreshToken, new  CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Path = "/api/auth/refresh",
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
 
-        return Ok(new { accessToken = newAccessToken, refreshToken = newRefreshToken });
+        return Ok(new { accessToken = newAccessToken });
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
     {
-        var token = await _context.RefreshTokens.FirstOrDefaultAsync(r => r.Token == request.RefreshToken);
-        if (token != null)
+        if (Request.Cookies.TryGetValue("rt", out var refreshTokenValue) &&  !string.IsNullOrWhiteSpace(refreshTokenValue))
         {
-            token.IsRevoked = true;
-            await _context.SaveChangesAsync();
+            var token = await _context.RefreshTokens.FirstOrDefaultAsync(r => r.Token == refreshTokenValue && !r.IsRevoked);
+            if (token != null)
+            {
+                token.IsRevoked = true;
+                await _context.SaveChangesAsync();
+            }
         }
-
+        Response.Cookies.Delete("rt",new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
+            Path = "/api/auth/refresh",
+        });
         return Ok();
     }
     [HttpPost("register")]
