@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<ServicePackageModel> ServicePackages { get; set; }
     public DbSet<Randevu> Randevu { get; set; }
+    public DbSet<VillaModel> Villa { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

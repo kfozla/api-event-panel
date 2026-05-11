@@ -95,6 +95,8 @@ builder.Services.AddScoped<IServicePackageRepository, ServicePackageRepository>(
 builder.Services.AddScoped<IServicePackageService,ServicePackageService>();
 builder.Services.AddScoped<IRandevuRepository, RandevuRepository>();
 builder.Services.AddScoped<IRandevuService,RandevuService>();
+builder.Services.AddScoped<IVillaRepository, VillaRepository>();
+builder.Services.AddScoped<IVillaService, VillaService>();
 builder.Services.AddScoped<JwtService>();
 
 
